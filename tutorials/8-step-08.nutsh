@@ -1,0 +1,95 @@
+lesson_name("El módulo Git")
+make_and_go_ws
+clear_ws
+run(`cp /tutorials/files/step-8/hosts hosts`)
+run(`cp -r /tutorials/files/step-8/files files`)
+
+"`Desplegar nuestro sitio web desde git`"
+
+"Hemos instalado apache, enviado nuestro virtualhost y reiniciado el servidor de forma segura. Ahora usaremos el módulo git para desplegar nuestra aplicación."
+
+"`El módulo git`"
+
+"Bueno, esto es una especie de descanso. Nada necesariamente nuevo aquí. El módulo `git` es sólo otro módulo. Pero lo probaremos sólo por diversión. Y estaremos familiarizados con él cuando se trate de `ansible-pull` más adelante."
+
+"Nuestro virtualhost está configurado, pero necesitamos algunos cambios para terminar nuestro despliegue. En primer lugar, estamos desplegando una aplicación PHP. Así que necesitamos instalar el paquete `libapache2-mod-php5`. Segundo, tenemos que instalar `git` ya que el módulo git (usado para clonar el repositorio git de nuestra aplicación) lo usa."
+
+"Podríamos hacerlo así:"
+
+print("\t
+...\n\t
+- name: Installs apache web server\n\t
+  apt: pkg=apache2 state=present update_cache=true\n\t
+\n\t
+- name: Installs php module\n\t
+  apt: pkg=libapache2-mod-php state=present\n\t
+\n\t
+- name: Installs git\n\t
+  apt: pkg=git state=present\n\t
+...\n\t
+")
+
+enter_to_continue
+
+"pero Ansible proporciona una forma más legible de escribir esto. Ansible puede hacer un bucle sobre una serie de elementos, y usar cada elemento en una acción de esta manera:"
+
+print("\t
+...\n\t
+- name: Installs necessary packages\n\t
+  apt: pkg={{ item }} state=latest\n\t
+  with_items:\n\t
+    - apache2\n\t
+    - libapache2-mod-php\n\t
+    - git\n\t
+...\n\t
+")
+
+run(`cp /tutorials/files/step-8/apache.yml apache.yml`)
+
+"Ahora, primero inspecciona nuestro playbook ejecutando:"
+
+"*cat apache.yml*"
+
+prompt {
+    if success && command == "cat apache.yml" {
+        expect ("cat apache.yml")
+        ""
+        break
+    }
+}
+
+"¡Ahí vamos! Introduce el siguiente comando para ejecutar nuestro playbook:"
+
+"*ansible-playbook -i hosts -l host1.example.org apache.yml*"
+
+prompt {
+    if success && command == "ansible-playbook -i hosts -l host1.example.org apache.yml" {
+        expect ("ansible-playbook -i hosts -l host1.example.org apache.yml")
+        ""
+        say("Ahora puedes visitar `http://127.0.0.1:" + run (`echo $(($HOSTPORT_BASE+1))`) + "`, y debiera mostrar a Bill Murray, y el hostname del servidor.")
+        say("Recuerda que nuestros hosts son containers docker y `el puerto 80 de host1.example.org` se expone en `el puerto " +  run (`echo $(($HOSTPORT_BASE+1))`) + " de tu máquina local`")
+        break
+    }
+}
+
+"Notar que la línea `tags: deploy` permite ejecutar sólo una parte del playbook. Digamos que hay una nueva versión para tu sitio y quieres acelerar y ejecutar sólo la parte que se encargan del despliegue. Las etiquetas le permiten hacerlo. Por supuesto, "deploy" es sólo una cadena, no tiene ningún significado específico y puede ser cualquier cosa."
+
+
+"Veamos cómo usarlo, ejecuta el siguiente comando:"
+
+"*ansible-playbook -i hosts -l host1.example.org apache.yml -t deploy*"
+
+prompt {
+    if success && command == "ansible-playbook -i hosts -l host1.example.org apache.yml -t deploy" {
+        expect ("ansible-playbook -i hosts -l host1.example.org apache.yml -t deploy")
+        ""
+        "Cool!"
+        break
+    }
+}
+
+"Ok, vamos a desplegar otro servidor web en la próxima lección."
+
+"¡Este es el final de esta lección!"
+
+enter_to_continue

@@ -1,0 +1,13 @@
+lesson_name("Juego libre")
+make_and_go_ws
+
+"¡Esto no es una lección, más bien una opción para que puedas jugar con ansible!"
+
+"¡Recuerda que puedes salir tecleando `exit` o `done` cuando hayas terminado!."
+
+prompt {
+    if command == "done" {
+        expect ("done")
+        break
+    }
+}

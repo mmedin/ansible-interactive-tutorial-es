@@ -1,0 +1,69 @@
+lesson_name("Playbooks condicionales")
+make_and_go_ws
+clear_ws
+run(`cp /tutorials/files/step-7/hosts hosts`)
+run(`cp -r /tutorials/files/step-7/files files`)
+
+"`Usando condicionales`"
+
+"Hemos instalado apache, enviado nuestro virtualhost y reiniciado el servidor. Pero queremos revertir las cosas a un estado estable si algo va mal."
+
+"`Revertir cuando las cosas van mal`"
+
+"Una advertencia: aquí no hay magia. El error anterior no fue culpa de ansible. No es un sistema de copia de seguridad, y no puede revertir todas las cosas. Es tu trabajo asegurarte de que tus playbooks son seguros. Ansible simplemente no sabe cómo revertir los efectos de `a2ensite awesome-app`."
+
+"Pero si nos empeñamos en hacerlo, está a nuestro alcance."
+
+"Como se ha dicho, cuando una tarea falla, el procesamiento se detiene... a menos que aceptemos el fallo (y deberíamos hacerlo). Esto es lo que haremos: continuar el procesamiento si hay un fallo pero sólo para revertir lo que hemos hecho."
+
+run(`cp /tutorials/files/step-7/apache.yml apache.yml`)
+
+"Primero inspecciona nuestro playbook ejecutando:"
+
+"*cat apache.yml*"
+
+prompt {
+    if success && command == "cat apache.yml" {
+        expect ("cat apache.yml")
+        ""
+        break
+    }
+} 
+
+"La palabra clave `register` registra la salida del comando `apache2ctl configtest` (estado de salida, stdout, stderr, ...), y `when: result|failed` comprueba si la variable registrada (`result`) contiene un estado de fallo."
+
+"¡Allá vamos! Introduce el siguiente comando para ejecutar nuestro playbook:"
+
+"*ansible-playbook -i hosts -l host1.example.org apache.yml*"
+
+prompt {
+    if ! success && command == "ansible-playbook -i hosts -l host1.example.org apache.yml" {
+        expect ("ansible-playbook -i hosts -l host1.example.org apache.yml")
+        ""
+        "Pareció funcionar como se esperaba."
+        break
+    }
+} 
+
+"Vamos a intentar reiniciar apache para ver si realmente ha funcionado, pero ¿cómo? Por supuesto con ansible :)"
+
+"Ejecuta el siguiente comando:"
+
+"*ansible -i hosts -m service -a 'name=apache2 state=restarted' host1.example.org*"
+
+prompt {
+    if success && command == "ansible -i hosts -m service -a 'name=apache2 state=restarted' host1.example.org" {
+        expect ("ansible -i hosts -m service -a 'name=apache2 state=restarted' host1.example.org")
+        ""
+        "Ok, ahora nuestro apache está a salvo de una mala configuración."
+        break
+    }
+} 
+
+"Aunque esto parezca mucho trabajo, no lo es. Recuerda que puedes usar variables en casi todas partes, así que es fácil hacer de esto un playbook general para apache, y usarlo en todas partes para desplegar tus virtualhosts. Escríbelo una vez, úsalo en todas partes."
+
+"Lo haremos en la lección 10, pero por ahora, vamos a desplegar nuestro sitio web usando git en la próxima lección."
+
+"¡Este es el final de esta lección!"
+
+enter_to_continue

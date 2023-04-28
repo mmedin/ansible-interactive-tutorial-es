@@ -1,0 +1,115 @@
+lesson_name("Playbooks")
+make_and_go_ws
+clear_ws
+run(`cp /tutorials/files/step-4/hosts hosts`)
+
+"`Ansible playbooks`"
+
+"El concepto de Playbook es muy sencillo: no es más que una serie de comandos ansible (tareas), como los que utilizamos con la herramienta CLI `ansible`. Estas tareas están dirigidas a un conjunto específico de hosts/grupos."
+
+"Los archivos necesarios para este paso deberían haber aparecido por arte de magia y ni siquiera tienes que teclearlos."
+
+"`Ejemplo de Apache (también conocido como \"¡Hola Mundo!\" de Ansible)`"
+
+"Inspecciona el archivo de inventario que hemos preparado para esta lección ejecutando el siguiente comando:"
+
+"*cat hosts*"
+
+prompt {
+    if success && command == "cat hosts" {
+        expect ("cat hosts")
+        ""
+        "Nota: recuerda que puedes (y en nuestro ejercicio lo hacemos) usar `ansible_host` para establecer la IP real del host. En el archivo de hosts reales, también tenemos `ansible_user=root` para manejar las posibles diferentes configuraciones por defecto de ansible."
+        break
+    }
+}
+
+run(`cp /tutorials/files/step-4/apache.yml apache.yml`)
+
+"Construyamos un playbook que instale apache en las máquinas del grupo `web`."
+
+"Acabo de copiar un archivo playbook en el directorio actual, ejecuta lo siguiente para ver el contenido:"
+
+"*cat apache.yml*"
+
+prompt {
+    if success && command == "cat apache.yml" {
+        expect ("cat apache.yml")
+        ""
+        "Sólo tenemos que decir lo que queremos hacer usando los módulos ansible adecuados. Aquí, estamos usando el módulo `apt` (http://docs.ansible.com/ansible/latest/apt_module.html) que puede instalar paquetes debian. También le pedimos a este módulo que actualice la caché de paquetes."
+
+        "También añadimos un nombre para esta tarea. Aunque esto no es necesario, es muy informativo cuando se ejecuta el playbook, por lo que es muy recomendable."
+
+        "¡En general, ha sido bastante fácil!"
+        break
+    }
+}
+
+"Ahora continuaremos con el comando de abajo. Aquí, `hosts` es el archivo de inventario, `-l` limita la ejecución solo a `host1.ejemplo.org` y `apache.yml` es nuestro playbook."
+
+"Ahora ejecuta el playbook con el siguiente comando: "
+
+"*ansible-playbook -i hosts -l host1.example.org apache.yml*"
+
+prompt {
+    if success && command == "ansible-playbook -i hosts -l host1.example.org apache.yml" {
+        expect ("ansible-playbook -i hosts -l host1.example.org apache.yml")
+
+        "¡Genial! Analicemos la salida línea por línea."
+
+        break
+    }
+}
+
+enter_to_continue
+
+print ("\t
+PLAY [web] ********************* \n
+")
+
+"Ansible nos dice que está ejecutando el play en el host `web`. Un play es un conjunto de instrucciones de ansible relacionadas con un host. Si tuviéramos otra línea `-host: blah` en nuestro playbook, también aparecería (pero después de que la primera play se haya completado)."
+
+print ("\t
+TASK [Gathering Facts] ********************* \n\t
+ok: [host1.example.org]\n\t
+\n")
+
+"¿Recuerdas cuando usábamos el módulo `setup`? Antes de cada ejecución, ansible lo ejecuta en los hosts necesarios para recopilar datos. Si esto no es necesario porque no necesitas ninguna información del host, puedes simplemente añadir `gather_facts: no` debajo de la entrada del host (al mismo nivel que `tasks:`)."
+
+print ("\t
+TASK [Instala apache web server] ********************* \n\t
+changed: [host1.example.org]\n\t
+\n")
+
+"A continuación, lo realmente importante: nuestra (primera y única) tarea se ejecuta, y como dice `changed`, sabemos que ha cambiado algo en `host1.example.org`."
+
+print ("\t
+PLAY RECAP ********************* \n\t
+host1.example.org              : ok=2    changed=1    unreachable=0    failed=0 \n\t
+\n")
+
+"Finalmente, ansible emite un resumen de lo sucedido: se han ejecutado dos tareas y una de ellas ha cambiado algo en el host (nuestra tarea apache, el módulo setup no cambia nada)."
+
+"Ahora vamos a intentar ejecutarlo de nuevo y ver qué pasa:"
+
+"*ansible-playbook -i hosts -l host1.example.org apache.yml*"
+
+prompt {
+    if success && command == "ansible-playbook -i hosts -l host1.example.org apache.yml" {
+        expect ("ansible-playbook -i hosts -l host1.example.org apache.yml")
+
+        "Observe el campo changed, ahora es `0`"
+
+        break
+    }
+}
+
+"Esto es absolutamente normal y es una de las características principales de ansible: el playbook actuará sólo si hay algo que hacer. Se llama `idempotencia`, y significa que puedes ejecutar tu playbook tantas veces como quieras, siempre terminarás en el mismo estado (bueno, a menos que hagas locuras con el módulo `shell`, por supuesto, pero esto está fuera del control de ansible)."
+
+"`Afinar las cosas`"
+
+"Claro que nuestro playbook puede instalar el servidor apache, pero podría ser un poco más completo. Podría añadir un virtualhost, asegurarse de que apache se reinicia. Incluso podría desplegar nuestro sitio web desde un repositorio git. Hagámoslo."
+
+"¡Este es el final de esta lección!"
+
+enter_to_continue

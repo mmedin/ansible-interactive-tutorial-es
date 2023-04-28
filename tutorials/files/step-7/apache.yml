@@ -1,0 +1,40 @@
+    - hosts: web
+      tasks:
+        - name: Instala apache web server
+          apt: pkg=apache2 state=present update_cache=true
+
+        - name: Copia nuestra configuración de virtualhost
+          copy: src=files/awesome-app dest=/etc/apache2/sites-available/awesome-app.conf mode=0640
+
+        - name: Deshabilita el virtualhost por defecto
+          command: a2dissite 000-default
+
+        - name: Activa nuestro virtualhost
+          command: a2ensite awesome-app
+
+        - name: Verifica que nuestra conf es válida
+          command: apache2ctl configtest
+          register: result
+          ignore_errors: True
+
+        - name: Rollback - Restablece el virtualhost original
+          command: a2ensite 000-default
+          when: result|failed
+
+        - name: Rollback - Desactiva nuestro virtualhost
+          command: a2dissite awesome-app
+          when: result|failed
+
+        - name: Rollback - Finaliza el playbook
+          fail: msg="Configuration file is not valid. Please check that before re-running the playbook."
+          when: result|failed
+        
+        - name: Deshabilita el virtualhost ssl por defecto
+          command: a2dissite default-ssl
+
+          notify:
+            - restart apache
+
+      handlers:
+        - name: restart apache
+          service: name=apache2 state=restarted

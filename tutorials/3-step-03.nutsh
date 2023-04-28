@@ -1,0 +1,69 @@
+lesson_name("Grupos y variables")
+make_and_go_ws
+clear_ws
+
+"`Agrupación de hosts`"
+
+"Los hosts en el inventario pueden agruparse arbitrariamente. Por ejemplo, puedes tener un grupo `debian`, un grupo `web-servers`, un grupo `production`, etc..."
+
+print("\t
+[debian]\n\t
+host0.example.org\n\t
+host1.example.org\n\t
+host2.example.org\n\t")
+
+"Esto se puede expresar incluso más corto:"
+
+print("\t
+[debian]\n\t
+host[0:2].example.org\n\t")
+
+"Si deseas utilizar grupos hijos, simplemente define un `[groupname:children]` y añade grupos hijos en él. Por ejemplo, digamos que tenemos varios sabores de linux corriendo, podríamos organizar nuestro inventario así:"
+
+print("\t
+[ubuntu]\n\t
+host0.example.org\n\t
+\n\t
+[debian]\n\t
+host[1:2].example.org\n\t
+\n\t
+[linux:children]\n\t
+ubuntu\n\t
+debian\n\t")
+
+"La agrupación, por supuesto, aprovecha la centralización de la configuración."
+
+enter_to_continue
+
+"`Estableciendo variables`"
+
+"Puedes asignar variables a hosts en varios lugares: archivo de inventario, archivos vars de host, archivos vars de grupo, etc..."
+
+"Normalmente establezco la mayoría de mis variables en los archivos vars de grupo/host (más sobre esto más adelante). Sin embargo, a menudo uso algunas variables directamente en el archivo de inventario, como `ansible_host` que establece la dirección IP para el host. Ansible por defecto resuelve el nombre del host cuando intenta conectarse vía SSH. Pero cuando estás arrancando un host, puede que aún no tenga su dirección IP definitiva. `ansible_host` es útil aquí."
+
+"Cuando se utiliza el comando `ansible-playbook` (no el comando `ansible` normal), las variables también se pueden establecer con el parámetro de línea de comandos `--extra-vars` (o `-e`). El comando `ansible-playbook` será cubierto en el siguiente paso."
+
+"`ansible_port`, como puedes adivinar, tiene la misma función respecto al puerto ssh al que ansible intentará conectarse."
+
+print("\t
+[ubuntu]\n\t
+host0.example.org ansible_host=192.168.0.12 ansible_port=2222\n\t")
+
+enter_to_continue
+
+"Ansible buscará definiciones de variables adicionales en los archivos de variables de grupo y de host. Estos archivos se buscarán en los directorios `group_vars` y `host_vars`, debajo del directorio donde se encuentra el archivo de inventario principal."
+
+"Los archivos se buscarán por nombre. Por ejemplo, utilizando el archivo de inventario mencionado anteriormente, `host0.ejemplo.org` se buscarán variables en esos archivos:"
+
+print("\t
+- group_vars/linux\n\t
+- group_vars/ubuntu\n\t
+- host_vars/host0.example.org\n", "cyan")
+
+"No importa si esos archivos no existen, pero si existen, ansible los usará."
+
+"Ahora que sabemos lo básico de módulos, inventarios y variables, vamos a explorar el verdadero poder de Ansible con playbooks."
+
+"¡Este es el final de esta lección!"
+
+enter_to_continue

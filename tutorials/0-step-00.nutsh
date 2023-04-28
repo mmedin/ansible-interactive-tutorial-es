@@ -1,0 +1,60 @@
+lesson_name("Comenzando")
+make_and_go_ws
+
+"¡Hola, bienvenidos al tutorial interactivo de Ansible!."
+
+"Esta lección es para que te familiarices con el entorno."
+
+"Ahora, estás dentro de un contenedor docker en el que tienes instalado ansible."
+
+"Verifica que tienes `ansible` instalado ejecutando el siguiente comando:"
+
+"*ansible --version*"
+
+prompt {
+    if success && command == "ansible --version" {
+        expect ("ansible --version")
+        ""
+        break
+    }
+} 
+
+"Hay 3 contenedores docker más que se comportan exactamente igual que máquinas (virtuales o físicas) actuando como nodos de Ansible a lo largo del tutorial."
+
+" Ejecuta el siguiente comando para verificar que están en funcionamiento:"
+
+"*fping host{0,1,2}.example.org*"
+
+prompt {
+    if success && command == "fping host{0,1,2}.example.org" {
+        expect ("fping host{0,1,2}.example.org")
+        ""
+        "Cool!"
+        break
+    }
+}
+
+"Estos hosts ya fueron aprovisionados con la clave ssh de este nodo. Así que no tienes que lidiar con la configuración de claves y puedes hacer ssh directamente en cualquiera de ellos como usuario root."
+
+"Pruébalo y no te olvides de volver a continuar (ejecuta *exit* para volver):"
+
+"*ssh host0.example.org*"
+
+prompt {
+    if success && command =~ "ssh host0.example.org.*" {
+        expect (`ssh host0.example.org -o "StrictHostKeyChecking no" "whoami"`)
+        ""
+        "Welcome back :)"
+        break
+    }
+}
+
+"La carpeta `ansible-interactive-tutorial/workspace` se monta como `/root/workspace` dentro de este contenedor. Por lo tanto, puedes utilizar tu editor favorito en tu máquina local para editar los archivos. Editar archivos no es necesario para seguir las lecciones."
+
+"Se puede seguir cada lección por separado, pero se recomienda especialmente seguir el orden, ya que la mayoría de ellas se construyen sobre la anterior."
+
+"Ten en cuenta que puedes salir de cualquier lección ejecutando *exit* desde el terminal"
+
+"¡Ahora estás listo para empezar!"
+
+enter_to_continue

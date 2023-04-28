@@ -1,0 +1,63 @@
+lesson_name("Playbooks, copiando archivos hacia los nodos")
+make_and_go_ws
+clear_ws
+run(`cp /tutorials/files/step-5/hosts hosts`)
+
+"`Afinar la configuración de apache`"
+
+"Hemos instalado apache, ahora vamos a configurar nuestro virtualhost."
+
+"`Perfeccionar el playbook`"
+
+"Sólo necesitamos un virtualhost en nuestro servidor, pero queremos sustituir el que viene por defecto por algo más específico. Así que tendremos que eliminar el virtualhost actual (presumiblemente `default`), enviar nuestro virtualhost, activarlo y reiniciar apache."
+
+run(`cp -r /tutorials/files/step-5/files files`)
+
+"Acabo de crear un directorio llamado `files`, y he añadido nuestra configuración de virtualhost para host1.example.org, que llamaremos `awesome-app`"
+
+"Comprueba el archivo de configuración ejecutando el siguiente comando:"
+
+"*cat files/awesome-app*"
+
+prompt {
+    if success && command == "cat files/awesome-app" {
+        expect ("cat files/awesome-app")
+        ""
+        break
+    }
+} 
+
+run(`cp /tutorials/files/step-5/apache.yml apache.yml`)
+
+"Ahora, una rápida actualización de nuestro playbook apache y estamos listos. Inspecciona nuestro playbook ejecutando:"
+
+"*cat apache.yml*"
+
+prompt {
+    if success && command == "cat apache.yml" {
+        expect ("cat apache.yml")
+        ""
+        break
+    }
+} 
+
+"¡Allá vamos! Introduce el siguiente comando para ejecutar nuestro playbook:"
+
+"*ansible-playbook -i hosts -l host1.example.org apache.yml*"
+
+prompt {
+    if success && command == "ansible-playbook -i hosts -l host1.example.org apache.yml" {
+        expect ("ansible-playbook -i hosts -l host1.example.org apache.yml")
+        ""
+        "¡Genial!" 
+        break
+    }
+} 
+
+"Bueno, pensándolo bien, nos estamos adelantando. ¿No deberíamos comprobar que la configuración está bien antes de reiniciar apache? Así no acabaremos interrumpiendo el servicio si nuestro archivo de configuración es incorrecto."
+
+"Hagámoslo en la próxima lección."
+
+"¡Este es el final de esta lección!"
+
+enter_to_continue

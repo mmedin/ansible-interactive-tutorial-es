@@ -1,0 +1,68 @@
+lesson_name("Playbooks y errores")
+make_and_go_ws
+clear_ws
+run(`cp /tutorials/files/step-6/hosts hosts`)
+
+"`Reinicio cuando la configuración es correcta`"
+
+"Hemos instalado apache, enviado nuestro virtualhost y reiniciado el servidor. Pero, ¿y si quisiéramos que el playbook reiniciara el servidor sólo si la configuración es correcta? Hagámoslo."
+
+"`Retirarse cuando las cosas van mal`"
+
+"Ansible tiene una característica ingeniosa: detendrá todo el procesamiento si algo va mal. Aprovecharemos esta función para detener nuestro playbook si el archivo de configuración no es válido."
+
+run(`cp -r /tutorials/files/step-6/files files`)
+
+"Acabo de cambiar nuestro archivo de configuración del virtualhost de awesome-app y lo he roto."
+
+" Mira la configuración rota ejecutando el siguiente comando:"
+
+"*cat files/awesome-app*"
+
+prompt {
+    if success && command == "cat files/awesome-app" {
+        expect ("cat files/awesome-app")
+        ""
+        "RocumentDoot en lugar de DocumentRoot :)"
+        break
+    }
+} 
+
+"Como se ha dicho, cuando una tarea falla, el procesamiento se detiene. Así que nos aseguraremos de que la configuración es válida antes de reiniciar el servidor. También empezamos añadiendo nuestro virtualhost `antes` de eliminar el virtualhost por defecto, para que un reinicio posterior (posiblemente hecho directamente en el servidor) no rompa apache."
+
+"Ten en cuenta que deberíamos haber hecho esto desde el principio. Como ya hemos ejecutado nuestro playbook, el virtualhost por defecto ya está desactivado. No importa: este playbook podría ser usado en otros hosts inocentes, así que a protegerlos."
+
+run(`cp /tutorials/files/step-6/apache.yml apache.yml`)
+
+"Inspeccionar nuestro libro de jugadas ejecutando:"
+
+"*cat apache.yml*"
+
+prompt {
+    if success && command == "cat apache.yml" {
+        expect ("cat apache.yml")
+        ""
+        break
+    }
+} 
+
+"¡Ahí vamos! Ejecuta el siguiente comando para ejecutar nuestro playbook:"
+
+"*ansible-playbook -i hosts -l host1.example.org apache.yml*"
+
+prompt {
+    if ! success && command == "ansible-playbook -i hosts -l host1.example.org apache.yml" {
+        expect ("ansible-playbook -i hosts -l host1.example.org apache.yml")
+        ""
+        "Como puedes ver dado que `apache2ctl` devuelve un código de salida de 1 cuando falla, ansible es consciente de ello y detiene el proceso. ¡Genial!" 
+        break
+    }
+} 
+
+"Mmmh, no tan genial de hecho... Nuestro virtualhost ha sido añadido de todas formas. Cualquier reinicio posterior de apache se quejará de nuestra configuración y dejará de funcionar. Así que necesitamos una forma de detectar fallos y revertirlos."
+
+"Hagámoslo en la próxima lección."
+
+"¡Este es el final de esta lección!"
+
+enter_to_continue

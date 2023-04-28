@@ -1,0 +1,25 @@
+    - hosts: web
+      tasks:
+        - name: Instala apache web server
+          apt: pkg=apache2 state=present update_cache=true
+
+        - name: Copia nuestra configuración de virtualhost
+          copy: src=files/awesome-app dest=/etc/apache2/sites-available/awesome-app.conf mode=0640
+
+        - name: Activa nuestro virtualhost
+          command: a2ensite awesome-app
+
+        - name: Verifica que nuestra conf es válida
+          command: apache2ctl configtest
+        
+        - name: Deshabilita el virtualhost por defecto
+          command: a2dissite 000-default
+
+        - name: Deshabilita el virtualhost ssl por defecto
+          command: a2dissite default-ssl
+          notify: 
+            - restart apache
+
+      handlers:
+        - name: restart apache
+          service: name=apache2 state=restarted

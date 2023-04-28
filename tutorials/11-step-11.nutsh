@@ -1,0 +1,118 @@
+lesson_name("Variables de nuevo")
+make_and_go_ws
+clear_ws
+run(`cp -r /tutorials/files/step-11/* .`)
+
+"`Variables de nuevo`"
+
+"Así que hemos configurado nuestro loadbalancer, y funciona bastante bien. Tomamos variables de facts y las usamos para construir la configuración. Pero Ansible también soporta otro tipo de variables. Ya vimos `ansible_host` en el inventario, pero ahora usaremos variables definidas en los archivos `host_vars` y `group_vars`."
+
+"`Ajuste fino de la configuración de HAProxy`"
+
+"HAProxy normalmente comprueba si los backends están vivos. Cuando un backend parece muerto, se elimina del grupo de backends y HAproxy ya no le envía tráfico".
+
+"Los backends también pueden tener diferentes pesos (entre 0 y 256). Cuanto mayor sea el peso, mayor número de conexiones recibirá el backend en comparación con otros backends. Es útil para repartir el tráfico de forma más adecuada si los nodos no son igual de potentes."
+
+"Usaremos variables para configurar todos estos parámetros."
+
+enter_to_continue
+
+"`Group vars`"
+
+"El intervalo de comprobación se establecerá en un archivo group_vars para haproxy. Esto asegurará que todos los haproxies hereden de él".
+
+"Sólo tenemos que crear el archivo `group_vars/haproxy` debajo del directorio de inventario. El archivo tiene que llamarse como el grupo para el que queremos definir las variables. Si quisiéramos definir variables para el grupo web, el archivo se llamaría `group_vars/web`."
+
+print("\t
+haproxy_check_interval: 3000\n\t
+haproxy_stats_socket: /tmp/sock\n\t
+")
+
+"El nombre es arbitrario. Se recomiendan nombres significativos, por supuesto, pero no hay una sintaxis requerida. Usted podría incluso utilizar variables complejas (a.k.a. Python dict) así:"
+
+print("\t
+haproxy:\n\t
+    check_interval: 3000\n\t
+    stats_socket: /tmp/sock\n\t
+")
+
+"Esto es sólo una cuestión de gustos. Las vars complejas pueden ayudar a agrupar cosas lógicamente. También pueden, en algunas circunstancias, fusionar claves definidas posteriormente (tenga en cuenta, sin embargo, que este no es el comportamiento por defecto de ansible). Por ahora usaremos variables simples."
+
+enter_to_continue
+
+"`Hosts vars`"
+
+"Hosts vars siguen exactamente las mismas reglas, pero viven en archivos bajo el directorio `host_vars`."
+
+"Definamos pesos para nuestros backends en `host_vars/host1.example.com:`"
+
+print("\t
+haproxy_backend_weight: 100\n\t
+")
+
+"y `host_vars/host2.example.com:`"
+
+print("\t
+haproxy_backend_weight: 150\n\t
+")
+
+"Si definiéramos `haproxy_backend_weight` en `group_vars/web`, se utilizaría `por defecto`: las variables definidas en los archivos `host_vars` sobrescriben a las varibles definidas en `group_vars`."
+
+"Ahora, puedes analizar el workspace: directorios `group_vars`, `host_vars` y archivos dentro"
+
+"Una vez que hayas terminado..."
+
+enter_to_continue
+
+"`Actualización de la plantilla`"
+
+"La plantilla debe actualizarse para utilizar estas variables."
+
+"Inspeccione el archivo de plantilla ejecutando el siguiente comando:"
+
+"*cat templates/haproxy.cfg.j2*"
+
+prompt {
+    if success && command == "cat templates/haproxy.cfg.j2" {
+        expect ("cat templates/haproxy.cfg.j2")
+        ""
+        "Ten en cuenta que también hemos introducido un bloque `{% if ...`. Este bloque adjunto sólo se mostrará si la prueba es verdadera. Así que si definimos `haproxy_stats_socket` en algún lugar para nuestro loadbalancer (incluso podríamos usar el `--extra-vars=\"haproxy_stats_sockets=/tmp/sock\"` en la línea de comandos), la línea adjunta aparecerá en el archivo de configuración generado ( ten en cuenta que la configuración sugerida es altamente insegura!)."
+        break
+    }
+} 
+
+"Observa que, aunque podríamos, no es necesario ejecutar el playbook de apache ya que nada cambió, pero tuvimos que hacer un poco de trampa para ello."
+
+"Vea el playbook actualizado de haproxy ejecutando:"
+
+"*cat haproxy.yml*"
+
+prompt {
+    if success && command == "cat haproxy.yml" {
+        expect ("cat haproxy.yml")
+        ""
+        "¿Ves? Hemos añadido una play vacía para hosts web en la parte superior. No hace nada. Pero está aquí porque activará la recolección de facts en hosts en el grupo `web`. Esto es necesario porque el playbook haproxy necesita recoger información de los hosts en este grupo. Si no hacemos esto, ansible se quejará diciendo que la clave `ansible_eth0` no existe".
+        break
+    }
+} 
+
+"¡Vamos!" 
+"Ejecuta el siguiente comando para ejecutar el playbook:"
+
+"*ansible-playbook -i hosts haproxy.yml*"
+
+prompt {
+    if success && command == "ansible-playbook -i hosts haproxy.yml" {
+        expect ("ansible-playbook -i hosts haproxy.yml")
+        "" 
+        "¡Bien!" 
+        break
+    }
+}
+
+
+"Ahora pasamos a la siguiente lección sobre \"Migrando en roles\"."
+
+"¡Este es el final de esta lección!"
+
+enter_to_continue

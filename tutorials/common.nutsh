@@ -1,0 +1,85 @@
+def exit_code {
+    return(run("echo $?"))
+}
+
+def success {
+    return(exit_code == "0")
+}
+
+def make_and_go_ws {
+    run(`WS="/root/workspace"`)
+    run(`mkdir -p $WS`)
+    run(`cd "$WS"`)
+}
+
+def clear_ws {
+    run(`WS="/root/workspace"`)
+    run(`rm -rf $WS/*`)
+}
+
+def enter_to_continue {
+    "¡Por favor, pulse la tecla \"`Enter`\" para continuar!"
+    prompt {
+        if command == "" {
+            break
+        }
+    }
+}
+
+def common_mistakes {
+    if command == "1s" {
+        "¡Es una L minúscula, no un uno! ¡Inténtalo otra vez!"
+    }
+    if command == ".." {
+        "`..` es el nombre del directorio, tienes que añadir lo que quieras 
+        hacer con él. Para añadir `cd`, escribe `cd` delante".
+    }
+    if command == "cd.." {
+        "¡Falta un espacio entre `cd` y `..`!"
+    }
+}
+
+def stayin(d) {
+    if !(run("pwd") =~ run(`echo "`+d+`"`)) {
+        run(`cd "`+d+`"`)
+        "Por favor, quédate en esta carpeta por ahora".
+    }
+}
+
+def stayinroot {
+    stayin("$ROOT")
+}
+
+def runs(cmd) {
+    run(cmd)
+    return(exit_code == "0")
+}
+
+def test(condition) {
+    return(runs("[[ "+condition+" ]]"))
+}
+
+def dir(d) {
+    return(test("-d \""+d+"\""))
+}
+
+def file(f) {
+    return(test("-f \""+f+"\""))
+}
+
+def help {
+    return(command =~ `echo\s+(help|hilfe)`)
+}
+
+def ready {
+    return(command =~ `echo\s+(fertig|ready)`)
+}
+
+def in(d) {
+    return(run("pwd") == run(`echo "` + d + `"`))
+}
+
+def user {
+    return(run("whoami"))
+}
+

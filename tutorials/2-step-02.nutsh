@@ -1,0 +1,127 @@
+lesson_name("Primeros módulos")
+make_and_go_ws
+clear_ws
+run(`cp /tutorials/files/step-1-2/hosts hosts`)
+
+"`Talking with nodes`"
+
+"Ahora estamos listos para seguir. "
+
+"Juguemos con el comando que vimos en el capítulo anterior: `ansible`. Este comando es el primero de los tres que proporciona ansible que interactúan con los nodos."
+
+enter_to_continue
+
+"`Haciendo algo útil`"
+
+"En el comando anterior, `-m ping` significa `usa el módulo ping`. Este módulo es uno de los muchos disponibles con ansible. "
+
+"`el módulo ping` es realmente simple, no necesita argumentos. Los módulos que toman argumentos los pasan a través del parámetro `-a`. Veamos otros módulos."
+
+enter_to_continue
+
+"`Módulo shell`"
+
+"Este módulo le permite ejecutar un comando shell en el host remoto"
+
+"Por favor, ejecute *ansible -i hosts -m shell -a 'uname -a' host0.example.org*"
+
+prompt {
+    if success && command == "ansible -i hosts -m shell -a 'uname -a' host0.example.org" {
+    	expect ("ansible -i hosts -m shell -a 'uname -a' host0.example.org")
+        "¡Fácil!"
+        "El siguiente es el `módulo copy`"
+        break
+    }
+}
+
+enter_to_continue
+
+"`Módulo copy`"
+
+"No es ninguna sorpresa, con este módulo puedes copiar un archivo desde la máquina controladora al nodo. Digamos que queremos copiar nuestro `/etc/motd` a `/tmp` de nuestro nodo destino. Por favor, ejecute el siguiente comando:"
+
+"*ansible -i hosts -m copy -a 'src=/etc/motd dest=/tmp/' host0.example.org*"
+
+prompt {
+    if success && command == "ansible -i hosts -m copy -a 'src=/etc/motd dest=/tmp/' host0.example.org" {
+    	expect ("ansible -i hosts -m copy -a 'src=/etc/motd dest=/tmp/' host0.example.org")
+        "Por favor, compruebe la salida de arriba."
+        break
+    }
+}
+
+"Ansible (más exactamente `el módulo copy` ejecutado en el nodo) respondió con un montón de información útil en formato JSON. Veremos cómo se puede utilizar más tarde."
+
+"Veremos otros módulos útiles más adelante. Ansible tiene una enorme lista de módulos que cubre casi todo lo que se puede hacer en un sistema."
+
+"Consulte la página siguiente: `https://docs.ansible.com/ansible/latest/collections/index_module.html`"
+
+"Si no encuentras el módulo adecuado, escribir uno es bastante fácil (ni siquiera tiene que ser Python, sólo tiene que hablar JSON)."
+
+enter_to_continue
+
+"`Muchos hosts, el mismo comando`"
+
+" Ok, lo anterior es divertido, pero tenemos muchos nodos que gestionar. Probémoslo también en otros hosts."
+
+"Digamos que queremos obtener algunos datos sobre el nodo, y, por ejemplo, saber qué versión de Ubuntu tenemos desplegada en los nodos, es bastante fácil. Por favor, ejecuta lo siguiente:"
+
+"*ansible -i hosts -m shell -a 'grep DISTRIB_RELEASE /etc/lsb-release' all*"
+
+prompt {
+    if success && command == "ansible -i hosts -m shell -a 'grep DISTRIB_RELEASE /etc/lsb-release' all" {
+    	expect ("ansible -i hosts -m shell -a 'grep DISTRIB_RELEASE /etc/lsb-release' all")
+        "`all` es un atajo que significa `todos los hosts encontrados en el archivo de inventario`"
+        break
+    }
+}
+
+enter_to_continue
+
+"`Muchos más datos`"
+
+"Eso era fácil. Sin embargo, rápidamente se volvería engorroso si quisiéramos más información (direcciones ip, tamaño de RAM, etc...). La solución viene de otro módulo realmente práctico (extrañamente) llamado `setup`: se especializa en la recopilación de `facts` de nodos."
+
+"Pruébalo:"
+
+"*ansible -i hosts -m setup host0.example.org*"
+
+prompt {
+    if success && command == "ansible -i hosts -m setup host0.example.org" {
+    	expect ("ansible -i hosts -m setup host0.example.org")
+        "Respondió con mucha información"
+        break
+    }
+}
+
+"También puede filtrar las claves devueltas, en caso de que busque algo específico."
+
+"Por ejemplo, digamos que quieres saber cuánta memoria tienes en todos tus hosts, fácil. Ejecute lo siguiente:"
+
+"*ansible -i hosts -m setup -a 'filter=ansible_memtotal_mb' all*"
+
+prompt {
+    if success && command == "ansible -i hosts -m setup -a 'filter=ansible_memtotal_mb' all" {
+    	expect ("ansible -i hosts -m setup -a 'filter=ansible_memtotal_mb' all")
+        "Observe que los hosts pueden responder en un orden diferente en comparación con la salida anterior. Esto se debe a que ansible paraleliza las comunicaciones con los hosts."
+        break
+    }
+}
+
+"Por cierto, al utilizar el módulo de configuración, puede utilizar `*` en la expresión `filter=`. Actuará como un glob de shell"
+
+enter_to_continue
+
+"`Selección de hosts`"
+
+"Vimos que `all` significa 'todos los hosts', pero ansible proporciona muchas otras formas de seleccionar hosts: `http://docs.ansible.com/ansible/latest/intro_patterns.html`"
+
+"- `host0.example.org:host1.example.org` se ejecutaría en host0.example.org y host1.example.org"
+
+"- `host*.example.org` se ejecutaría en todos los hosts que empiecen por 'host' y terminen por '.example.org' (al igual que un shell glob también)"
+
+"Hay otras formas que implican a grupos, lo veremos en la próxima lección."
+
+"¡Este es el final de esta lección!"
+
+enter_to_continue

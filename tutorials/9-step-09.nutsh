@@ -1,0 +1,52 @@
+lesson_name("Implementando en varios nodos")
+make_and_go_ws
+clear_ws
+run(`cp /tutorials/files/step-9/hosts hosts`)
+run(`cp -r /tutorials/files/step-9/files files`)
+run(`cp /tutorials/files/step-9/apache.yml apache.yml`)
+
+"`Añadir otro servidor web`"
+
+"Tenemos un servidor web. Ahora queremos dos."
+
+"`Actualización del inventario`"
+
+"Como tenemos grandes expectativas, añadiremos otro servidor web y un balanceador de carga que configuraremos en la próxima lección. Pero vamos a completar el inventario ahora."
+
+"Inspecciona el archivo de inventario que preparamos para esta lección ejecutando el siguiente comando:"
+
+"*cat hosts*"
+
+prompt {
+    if success && command == "cat hosts" {
+        expect ("cat hosts")
+        ""
+        break
+    }
+} 
+
+"`Construir otro servidor web`"
+
+"No hemos hecho todo este trabajo en vano. Desplegar otro servidor web es sencillísimo."
+
+"Todo lo que tenemos que hacer es eliminar `-l host1.example.org` de nuestra línea de comandos. Recuerda que `-l` es un parámetro que limita la ejecución del playbook en hosts específicos. Ahora que ya no limitamos, se ejecutará en todos los hosts en los que se pretende que se ejecute el playbook (es decir, `web`)."
+
+"Si tuviéramos otros servidores en el grupo web pero quisiéramos limitar el playbook a un subconjunto, podríamos haber utilizado, por ejemplo: `-l firststhost:secondhost:....`"
+
+"Introduce el siguiente comando para ejecutar nuestro playbook:"
+
+"*ansible-playbook -i hosts apache.yml*"
+
+prompt {
+    if success && command == "ansible-playbook -i hosts apache.yml" {
+        expect ("ansible-playbook -i hosts apache.yml")
+        "" 
+        break
+    }
+} 
+
+"Ahora  tenemos una bonita granja de servidores web. Vamos a convertirlo en un clúster poniendo un balanceador de carga delante de ellos en la próxima lección".
+
+"¡Este es el final de esta lección!"
+
+enter_to_continue

@@ -1,0 +1,83 @@
+lesson_name("Roles de Ansible Galaxy - Instalar un servidor Jenkins")
+make_and_go_ws
+clear_ws
+run(`cp -r /tutorials/files/step-13/* .`)
+
+"Ansible Galaxy ( `http://docs.ansible.com/ansible/latest/galaxy.html` ) se refiere al sitio web Galaxy donde los usuarios pueden compartir roles, y a una herramienta de línea de comandos para instalar, crear y gestionar roles."
+
+"En esta lección, vamos a utilizar un rol de Ansible Galaxy para instalar Jenkins en uno de nuestros nodos."
+
+"Puede consultar las funciones disponibles aquí: https://galaxy.ansible.com/search?keywords=&order_by=-relevance&deprecated=false&type=role&page=1"
+
+"Ejecute el siguiente comando para instalar el rol requerido"
+
+"*ansible-galaxy install geerlingguy.jenkins geerlingguy.java*"
+
+prompt {
+    if success && command == "ansible-galaxy install geerlingguy.jenkins geerlingguy.java" {
+        expect ("ansible-galaxy install geerlingguy.jenkins geerlingguy.java")
+        "" 
+        "OK!" 
+        break
+    }
+}
+
+"Continuemos con un archivo de inventario. Instalaremos en `host0. example.org`."
+
+"Comprueba el archivo de inventario que te he preparado, ejecutando:"
+
+"*cat hosts*"
+
+prompt {
+    if success && command == "cat hosts" {
+        expect ("cat hosts")
+        ""
+        "¿Ves? Hemos creado un nuevo grupo llamado `jenkins`. Esto no es obligatorio, pero es una buena práctica."
+        break
+    }
+}
+
+"Ahora necesitamos un playbook y usaremos el proporcionado como ejemplo en el repo de github del rol: `https://github.com/geerlingguy/ansible-role-jenkins#example-playbook`"
+
+"Inspecciona nuestro playbook, ejecutando:"
+
+"*cat jenkins.yaml*"
+
+prompt {
+    if success && command == "cat jenkins.yaml" {
+        expect ("cat jenkins.yaml")
+        ""
+
+        "El playbook incluye otro rol que instala `java` (un prerrequisito para jenkins). Este rol ya ha sido instalado con nuestro primer comando `ansible-galaxy install ...` ya que `geerlingguy.jenkins` tiene una dependencia de `geerlingguy.java`."
+
+        "¡Eso es, estamos listos!"  
+         
+        break
+    }
+}
+
+"Introduce el siguiente comando para ejecutar el playbook:"
+
+"*ansible-playbook -i hosts jenkins.yaml*"
+
+prompt {
+    if success && command == "ansible-playbook -i hosts jenkins.yaml" {
+        expect ("ansible-playbook -i hosts jenkins.yaml")
+        "" 
+        
+        "¡Perfecto!"
+
+        say("Ahora puedes ir a `http://127.0.0.1:" + run (`echo $(($HOSTPORT_BASE+3))`) + "` y observar los resultados.")
+
+        say("Las credenciales son `admin/admin` :)")
+        
+        say("! Recuerda que nuestros hosts son contenedores docker y `el puerto 8080 of host0.example.org` e expone en `el puerto " +  run (`echo $(($HOSTPORT_BASE+3))`) + " de tu máquina local`") 
+
+        break
+    }
+}
+
+
+"¡Este es el final de esta lección!"
+
+enter_to_continue

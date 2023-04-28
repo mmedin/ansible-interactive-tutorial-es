@@ -1,0 +1,86 @@
+lesson_name("Plantillas")
+make_and_go_ws
+clear_ws
+run(`cp -r /tutorials/files/step-10/* .`)
+
+"`Plantillas`"
+
+"Usaremos el `haproxy` como load balancer. Por supuesto, la instalación es igual que la que hicimos para apache. Pero ahora la configuración es un poco más complicada ya que necesitamos listar todos los servidores web en la configuración de haproxy. ¿Cómo podemos hacerlo?"
+
+"`Plantilla de configuración HAProxy`"
+
+"Ansible utiliza `Jinja2` ( `http://jinja.pocoo.org/docs/2.9/` ), un motor de plantillas para Python. Cuando escribes plantillas Jinja2, puedes usar cualquier variable definida por Ansible."
+
+"Por ejemplo, si desea obtener el `inventory_name` del host para el que se ha creado la plantilla, sólo tiene que escribir `{{inventory_hostname}}` en la plantilla Jinja".
+
+"O si necesitas la IP de la primera interfaz ethernet (que ansible conoce gracias al módulo `setup`), sólo tienes que escribir: `{{ ansible_eth0['ipv4']['address'] }}` en tu plantilla."
+
+"Las plantillas Jinja2 también soportan condicionales, bucles for, etc..."
+
+"Acabo de crear un directorio llamado `templates`, y he creado una plantilla Jinja con el nombre `haproxy.cfg.j2` dentro. Usamos la extensión `.j2` por convención, para hacer obvio que se trata de una plantilla Jinja2, pero esto no es obligatorio."
+
+"Inspeccione el archivo de plantilla ejecutando el siguiente comando:"
+
+"*cat templates/haproxy.cfg.j2*"
+
+prompt {
+    if success && command == "cat templates/haproxy.cfg.j2" {
+        expect ("cat templates/haproxy.cfg.j2")
+        ""
+        "Tenemos muchas cosas nuevas aquí."
+        break
+    }
+} 
+
+"En primer lugar, `{{ ansible_eth0['ipv4']['address'] }}` se sustituirá por la IP del balanceador de carga en eth0."
+
+"A continuación, tenemos un bucle. Este bucle se utiliza para construir la lista de servidores backend. Recorrerá cada host listado en el grupo `[web]` (y pondrá este host en la variable `backend`). Para cada uno de los hosts se mostrará una línea usando los datos del host. Todos los datos de los hosts están expuestos en la variable `hostvars`, por lo que es fácil acceder a otras variables del host (como su nombre de host o en este caso IP)."
+
+"Podríamos haber escrito la lista de hosts a mano, ya que sólo tenemos 2. Pero esperamos que el servidor tenga mucho éxito, y que necesitemos un centenar de ellos. Así, añadir servidores a la configuración o cambiar algunos se reduce a añadir o quitar hosts del grupo `[web]`."
+
+enter_to_continue
+
+"`HAProxy playbook`"
+
+"Hemos hecho la parte más difícil del trabajo. Escribir un playbook para instalar y configurar HAproxy es pan comido."
+
+"Muestra el playbook para haproxy ejecutando el siguiente comando:"
+
+"*cat haproxy.yml*"
+
+prompt {
+    if success && command == "cat haproxy.yml" {
+        expect ("cat haproxy.yml")
+        ""
+        break
+    }
+} 
+
+"Te resulta familiar, ¿verdad? El único módulo nuevo aquí es `template`, que tiene los mismos argumentos que `copy`. También restringimos este playbook al grupo `haproxy`."
+
+"Y ahora... vamos a probar esto. Dado que nuestro inventario sólo contiene los hosts necesarios para el cluster, no necesitamos limitar la lista de hosts e incluso podemos ejecutar ambos playbooks. Bueno, a decir verdad, debemos ejecutar ambos al mismo tiempo, ya que el playbook haproxy requiere datos de los dos webservers. En la próxima lección mostraremos cómo evitar esto".
+
+"Introduce el siguiente comando para ejecutar nuestros playbooks:"
+
+"*ansible-playbook -i hosts apache.yml haproxy.yml*"
+
+prompt {
+    if success && command == "ansible-playbook -i hosts apache.yml haproxy.yml" {
+        expect ("ansible-playbook -i hosts apache.yml haproxy.yml")
+        "" 
+        "Se ve bien." 
+        
+        say("Ahora ve a `http://127.0.0.1:" + run (`echo $HOSTPORT_BASE`) + "` y nota el resultado. ¡Tu clúster está desplegado!")
+        
+        say("Incluso puedes echar un vistazo a las estadísticas de HAProxy en `http://127.0.0.1:" + run (`echo $HOSTPORT_BASE`) + "/haproxy?stats`")
+        
+        say("! Recuerda que nuestros hosts son contenedores docker y `el puerto 80 de host0.example.org` se expone en `el puerto " +  run (`echo $HOSTPORT_BASE`) + " de tu máquina local`") 
+        break
+    }
+}
+
+"Ahora a la siguiente lección sobre \"Variables de nuevo\"."
+
+"¡Este es el final de esta lección!"
+
+enter_to_continue
