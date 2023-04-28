@@ -72,8 +72,7 @@ prompt {
     }
 }
 
-"Notar que la línea `tags: deploy` permite ejecutar sólo una parte del playbook. Digamos que hay una nueva versión para tu sitio y quieres acelerar y ejecutar sólo la parte que se encargan del despliegue. Las etiquetas le permiten hacerlo. Por supuesto, "deploy" es sólo una cadena, no tiene ningún significado específico y puede ser cualquier cosa."
-
+"Notar que la línea `tags: deploy` permite ejecutar sólo una parte del playbook. Digamos que hay una nueva versión para tu sitio y quieres acelerar y ejecutar sólo la parte que se encargan del despliegue. Las etiquetas le permiten hacerlo. Por supuesto, \"deploy\" es sólo una cadena, no tiene ningún significado específico y puede ser cualquier cosa."
 
 "Veamos cómo usarlo, ejecuta el siguiente comando:"
 
