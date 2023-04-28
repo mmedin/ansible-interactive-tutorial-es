@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 NOF_HOSTS=3
