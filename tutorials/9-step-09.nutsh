@@ -45,7 +45,7 @@ prompt {
     }
 } 
 
-"Ahora  tenemos una bonita granja de servidores web. Vamos a convertirlo en un clúster poniendo un balanceador de carga delante de ellos en la próxima lección".
+"Ahora  tenemos una bonita granja de servidores web. Vamos a convertirlo en un clúster poniendo un balanceador de carga delante de ellos en la próxima lección."
 
 "¡Este es el final de esta lección!"
 

@@ -21,7 +21,7 @@ prompt {
 
 "Hay 3 contenedores docker más que se comportan exactamente igual que máquinas (virtuales o físicas) actuando como nodos de Ansible a lo largo del tutorial."
 
-" Ejecuta el siguiente comando para verificar que están en funcionamiento:"
+"Ejecuta el siguiente comando para verificar que están en funcionamiento:"
 
 "*fping host{0,1,2}.example.org*"
 

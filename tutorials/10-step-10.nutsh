@@ -11,7 +11,7 @@ run(`cp -r /tutorials/files/step-10/* .`)
 
 "Ansible utiliza `Jinja2` ( `http://jinja.pocoo.org/docs/2.9/` ), un motor de plantillas para Python. Cuando escribes plantillas Jinja2, puedes usar cualquier variable definida por Ansible."
 
-"Por ejemplo, si desea obtener el `inventory_name` del host para el que se ha creado la plantilla, sólo tiene que escribir `{{inventory_hostname}}` en la plantilla Jinja".
+"Por ejemplo, si desea obtener el `inventory_name` del host para el que se ha creado la plantilla, sólo tiene que escribir `{{inventory_hostname}}` en la plantilla Jinja."
 
 "O si necesitas la IP de la primera interfaz ethernet (que ansible conoce gracias al módulo `setup`), sólo tienes que escribir: `{{ ansible_eth0['ipv4']['address'] }}` en tu plantilla."
 
@@ -58,7 +58,7 @@ prompt {
 
 "Te resulta familiar, ¿verdad? El único módulo nuevo aquí es `template`, que tiene los mismos argumentos que `copy`. También restringimos este playbook al grupo `haproxy`."
 
-"Y ahora... vamos a probar esto. Dado que nuestro inventario sólo contiene los hosts necesarios para el cluster, no necesitamos limitar la lista de hosts e incluso podemos ejecutar ambos playbooks. Bueno, a decir verdad, debemos ejecutar ambos al mismo tiempo, ya que el playbook haproxy requiere datos de los dos webservers. En la próxima lección mostraremos cómo evitar esto".
+"Y ahora... vamos a probar esto. Dado que nuestro inventario sólo contiene los hosts necesarios para el cluster, no necesitamos limitar la lista de hosts e incluso podemos ejecutar ambos playbooks. Bueno, a decir verdad, debemos ejecutar ambos al mismo tiempo, ya que el playbook haproxy requiere datos de los dos webservers. En la próxima lección mostraremos cómo evitar esto."
 
 "Introduce el siguiente comando para ejecutar nuestros playbooks:"
 

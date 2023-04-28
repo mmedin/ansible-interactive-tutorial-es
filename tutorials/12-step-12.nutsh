@@ -11,7 +11,7 @@ run(`cp -r /tutorials/files/step-12/* .`)
 
 "`Estructura de roles`"
 
-"Los roles añaden un poco de \"magia\" a Ansible: suponen una organización de archivos específica. Aunque hay un diseño sugerido para los roles, puedes organizar las cosas como quieras usando includes. Sin embargo, las convenciones de roles ayudan a construir playbooks modulares, y el mantenimiento será mucho más simple. Los Rubyistas llamarían a esto "convención por sobre configuración."
+"Los roles añaden un poco de \"magia\" a Ansible: suponen una organización de archivos específica. Aunque hay un diseño sugerido para los roles, puedes organizar las cosas como quieras usando includes. Sin embargo, las convenciones de roles ayudan a construir playbooks modulares, y el mantenimiento será mucho más simple. Los Rubyistas llamarían a esto \"convención por sobre configuración\"."
 
 enter_to_continue
 

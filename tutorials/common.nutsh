@@ -32,7 +32,7 @@ def common_mistakes {
     }
     if command == ".." {
         "`..` es el nombre del directorio, tienes que añadir lo que quieras 
-        hacer con él. Para añadir `cd`, escribe `cd` delante".
+        hacer con él. Para añadir `cd`, escribe `cd` delante."
     }
     if command == "cd.." {
         "¡Falta un espacio entre `cd` y `..`!"
@@ -42,7 +42,7 @@ def common_mistakes {
 def stayin(d) {
     if !(run("pwd") =~ run(`echo "`+d+`"`)) {
         run(`cd "`+d+`"`)
-        "Por favor, quédate en esta carpeta por ahora".
+        "Por favor, quédate en esta carpeta por ahora."
     }
 }
 
@@ -82,4 +82,3 @@ def in(d) {
 def user {
     return(run("whoami"))
 }
-
